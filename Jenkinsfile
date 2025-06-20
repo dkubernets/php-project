@@ -15,11 +15,9 @@ pipeline {
                 }
             }
         }
-          stage('Docker login') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-pwd', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+         withCredentials([usernamePassword(credentialsId: 'dockerhub-pwd', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh "echo $PASS | docker login -u $USER --password-stdin"
-                    sh 'docker push dkubernet:v1'
+                    sh 'docker push dkubernets/php-project:v1'
                 }
             }
         }
