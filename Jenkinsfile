@@ -10,7 +10,7 @@ pipeline {
         stage('Build docker image'){
             steps{
                 script{
-                    sh 'docker build -t dkubernets:v1 .'
+                    sh 'docker build -t dkubernetes/akshatnewimg6july:v1 .'
                     sh 'docker images'
                 }
             }
@@ -19,7 +19,7 @@ pipeline {
             steps{
                  withCredentials([usernamePassword(credentialsId: 'dockerHubCred', usernameVariable: 'dockerHubUser', passwordVariable: 'dockerHubPass')]) {
                     sh "docker login -u ${env.dockerHubUser}, -p {env.dockerHubPass} "
-                    sh"docker image tag dkubernets:v1 dkubernetes/dkubernets:v1"
+                    sh"docker image tag dkubernets:v1 dkubernetes/akshatnewimg6july:v1"
                     sh 'docker push dkubernetes/dkubernets:v1'
                      
                 }
