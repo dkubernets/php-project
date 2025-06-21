@@ -3,14 +3,14 @@ pipeline {
     stages{
         stage('git cloned'){
             steps{
-                git url:'https://github.com/dkubernets/php-project/', branch: "master"
+                git url:'https://github.com/dkubernetes/php-project/', branch: "master"
               
             }
         }
         stage('Build docker image'){
             steps{
                 script{
-                    sh 'docker build -t dkubernets/akshatnewimg6july:v1 .'
+                    sh 'docker build -t dkubernetes/akshatnewimg6july:v1 .'
                     sh 'docker images'
                 }
             }
@@ -32,8 +32,8 @@ pipeline {
                     sshagent(['sshkeypair']) {
                         //chnage the private ip in below code
                         // sh "docker run -itd --name My-first-containe2111 -p 8083:80 dkubernetes/2febimg:v1"
-                         sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.17.188 ${dockerrm}"
-                         sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.17.188 ${dockerCmd}"
+                         sh "ssh -o StrictHostKeyChecking=no ubuntu@10.0.13.189 ${dockerrm}"
+                         sh "ssh -o StrictHostKeyChecking=no ubuntu@10.0.13.189 ${dockerCmd}"
                     }
                 }
             }
