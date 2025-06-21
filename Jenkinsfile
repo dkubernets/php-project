@@ -19,7 +19,7 @@ pipeline {
             steps{
                  withCredentials([usernamePassword(credentialsId: 'dockerHubCred', usernameVariable: 'dockerHubUser', passwordVariable: 'dockerHubPass')]) {
                     sh "docker login -u ${env.dockerHubUser}, -p {env.dockerHubPass} "
-                    sh"docker image tag dkubernetes:v1 dkubernetes/dkubernets:v1"
+                    sh"docker image tag dkubernets:v1 dkubernetes/dkubernets:v1"
                     sh 'docker push dkubernetes/dkubernets:v1'
                      
                 }
