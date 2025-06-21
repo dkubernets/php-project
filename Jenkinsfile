@@ -10,29 +10,16 @@ pipeline {
         stage('Build docker image'){
             steps{
                 script{
-                    sh 'docker build -t dkubernet:v1 .'
+                    sh 'docker build -t dkubernets:v1'
                     sh 'docker images'
                 }
             }
         }
-         withCredentials([usernamePassword(credentialsId: 'dockerhub-pwd', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh "echo $PASS | docker login -u $USER --password-stdin"
-                    sh 'docker push dkubernets/php-project:v1'
-                }
-            }
-        }
-        
-     stage('Deploy') {
-            steps {
-               script {
-                   def dockerrm = 'sudo docker rm -f My-first-containe2211 || true'
-                    def dockerCmd = 'sudo docker run -itd --name My-first-containe2211 -p 8083:80 dkubernet:v1'
-                    sshagent(['sshkeypair']) {
-                        //chnage the private ip in below code
-                         sh "docker run -itd --name My-first-containe2111 -p 8083:80 dkubernet:v1"
-                         sh "ssh -o StrictHostKeyChecking=no ubuntu@10.0.11.166 ${dockerrm}"
-                         sh "ssh -o StrictHostKeyChecking=no ubuntu@10.0.11.166 ${dockerCmd}"
-                    }
+         withCredentials([usernamePassword(credentialsId: 'dockerHubCred', usernameVariable: 'dockerHubUser', passwordVariable: 'dockerHubPass')]) {
+                    sh "docker login -u ${env.dockerHubUser}, -p {env.dockerHubPass} "
+                    sh"docker image tag dkubernets:v1 dkubernets/dkubernets:v1"
+                    sh 'docker push dkubernets/dkubernets:v1'
+                     
                 }
             }
         }
