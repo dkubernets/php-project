@@ -5,7 +5,7 @@ pipeline {
         CONTAINER_NAME = "my-php-container"
         HOST_PORT = "8083"
         REMOTE_USER = "ubuntu"
-        REMOTE_IP = "10.0.13.189"  // Replace with your actual IP
+        REMOTE_IP = "10.0.13.189" // Replace with your actual private IP
     }
     stages {
         stage('Clone Git Repo') {
@@ -14,11 +14,12 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image with Buildx') {
+        stage('Build Docker Image') {
             steps {
                 script {
+                    // Use classic docker build to avoid buildx issues
                     sh '''
-                        docker buildx build -t $IMAGE_NAME . --load
+                        docker build -t $IMAGE_NAME .
                     '''
                 }
             }
