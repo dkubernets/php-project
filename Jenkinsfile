@@ -18,7 +18,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        docker buildx create --name mybuilder --use || echo "builder exists"
+                        docker buildx create --use || true 
                         docker buildx inspect --bootstrap
                         docker buildx build -t $IMAGE_NAME . --load
                     '''
