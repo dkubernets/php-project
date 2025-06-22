@@ -2,6 +2,10 @@ pipeline {
     agent any
     environment {
         IMAGE_NAME = "king094/akshatnewimg6july:v1"
+        CONTAINER_NAME = "My-first-containe2211"
+        HOST_PORT = "8089"
+        REMOTE_USER = "ubuntu"
+        REMOTE_IP = "10.0.13.189" // <-- CHANGE if needed
     }
     stages {
         stage('Clone Git Repo') {
@@ -9,10 +13,10 @@ pipeline {
                 git url: 'https://github.com/dkubernets/php-project/', branch: 'master'
             }
         }
+
         stage('Build Docker Image with Buildx') {
             steps {
                 script {
-                    // Ensure buildx builder exists and is used
                     sh '''
                         docker buildx create --name mybuilder --use || echo "builder exists"
                         docker buildx inspect --bootstrap
@@ -21,6 +25,7 @@ pipeline {
                 }
             }
         }
+
         stage('Docker Login and Push') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerHubCred', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
@@ -31,19 +36,20 @@ pipeline {
                 }
             }
         }
-        stage('Deploy') {
+
+        stage('Deploy on Remote Host') {
             steps {
-               script {
-                   def dockerrm = 'sudo docker rm -f My-first-containe2211 || true'
-                    def dockerCmd = 'sudo docker run -itd --name My-first-containe2211 -p 8083:80 king094/akshatnewimg6july:v1'
+                script {
+                    def remoteRemoveCmd = "docker rm -f ${CONTAINER_NAME} || true"
+                    def remoteRunCmd = "docker run -d --name ${CONTAINER_NAME} -p ${HOST_PORT}:80 ${IMAGE_NAME}"
+
                     sshagent(['sshkeypair']) {
-                        //chnage the private ip in below code
-                         sh "docker run -itd --name My-first-containe2111 -p 8083:80 king094/akshatnewimg6july:v1"
-                         sh "ssh -o StrictHostKeyChecking=no ubuntu@10.0.13.189 ${dockerrm}"
-                         sh "ssh -o StrictHostKeyChecking=no ubuntu@10.0.13.189 ${dockerCmd}"
+                        // SSH into the remote host and deploy
+                        sh "ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_IP} '${remoteRemoveCmd}'"
+                        sh "ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_IP} '${remoteRunCmd}'"
                     }
                 }
             }
-        } 
+        }
     }
 }
